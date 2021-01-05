@@ -41,7 +41,7 @@ from backstop_history import LTCTI_RTS
 
 import kadi.commands
 
-from Chandra.Time import DateTime
+from cxotime import CxoTime
 
 
 # -------------------------------------------------------------------------------
@@ -686,7 +686,7 @@ class BackstopHistory(object):
         #            but it will end either because it runs to completion with
         #            it's own Stop Science commands, OR a Stop Sciecne in the review load
         # To do that we obtain the start time of the timed LTCTI command set
-        ltcti_cmd_list_start_time = DateTime(RTS_start_date).secs
+        ltcti_cmd_list_start_time = CxoTime(RTS_start_date).secs
 
         # Initialize the ACIS_specific_cmds as an empty array of DTYPE self.ACISPKT_dtype
         ACIS_specific_cmds = np.array( [], dtype = self.ACIS_specific_dtype)
@@ -778,7 +778,7 @@ class BackstopHistory(object):
             new_maneuver['params']['q2'] = float(q2)
             new_maneuver['params']['q3'] = float(q3)
             new_maneuver['params']['q4'] = float(q4)
-            new_maneuver['time'] = DateTime(MAN_date).secs
+            new_maneuver['time'] = CxoTime(MAN_date).secs
 
             # Tack the maneuver to the Master List
             self.master_list.append(new_maneuver)
@@ -793,8 +793,8 @@ class BackstopHistory(object):
         # NOTE: This is done whether or not the maneuver data was good.
         #       It allows the loop to continue looking for maneuvers
         aoman = copy.deepcopy(self.AOMANUVR_bs_cmd)
-        aoman_time = DateTime(MAN_date).secs + 1
-        aoman_date = DateTime(aoman_time).date
+        aoman_time = CxoTime(MAN_date).secs + 1
+        aoman_date = CxoTime(aoman_time).date
         aoman['date'] = aoman_date
         aoman['time'] = aoman_time
         # Tack the maneuver to the Master List
@@ -824,7 +824,7 @@ class BackstopHistory(object):
                   you can rest assured that the necessary data structurs exist
         """
         # Log that you see it
-        self.logger.info("\nNEW Power Command Found %s power cmd: %s" % (DateTime(power_cmd_event[0]).date, power_cmd_event[1]) )
+        self.logger.info("\nNEW Power Command Found %s power cmd: %s" % (CxoTime(power_cmd_event[0]).date, power_cmd_event[1]) )
         # Process the power command. Make a copy of the appropriate power command attribute
         if power_cmd_event[1] == 'WSVIDALLDN':
             new_pwr_cmd = copy.deepcopy(self.WSVIDALLDN_bs_cmd)
@@ -834,8 +834,8 @@ class BackstopHistory(object):
             new_pwr_cmd = copy.deepcopy(self.WSPOW0002A_bs_cmd)
 
 	# Next insert the date and tie which comes from the NLET line
-        new_pwr_cmd['date'] = DateTime(power_cmd_event[0]).date
-        new_pwr_cmd['time'] = DateTime(power_cmd_event[0]).secs
+        new_pwr_cmd['date'] = CxoTime(power_cmd_event[0]).date
+        new_pwr_cmd['time'] = CxoTime(power_cmd_event[0]).secs
 
         # Now append this power command to the Master List.
         self.master_list.append(new_pwr_cmd)
@@ -851,7 +851,7 @@ class BackstopHistory(object):
     def CombineSTOP(self, cont_bs_cmds, rev_bs_cmds, shutdown_date):
 
         # Convert and record shutdown date to seconds:
-        self.STOP_time = DateTime(shutdown_date).secs
+        self.STOP_time = CxoTime(shutdown_date).secs
 
         # Trim the Continuity commands list to include only those
         # commands whose excution time is before the shutdown time
@@ -877,7 +877,7 @@ class BackstopHistory(object):
         # by one second
         for eachcmd in scs107_bs_cmds:
             eachcmd['time'] = base_time
-            eachcmd['date'] = DateTime(base_time).date
+            eachcmd['date'] = CxoTime(base_time).date
 
             # Increment the base time by one second
             base_time += 1.0
@@ -1007,7 +1007,7 @@ class BackstopHistory(object):
                          loads.
         """
         # Convert shutdown date to seconds:
-        self.S107_time = DateTime(shutdown_date).secs
+        self.S107_time = CxoTime(shutdown_date).secs
 
         # STEP 1
 
@@ -1032,12 +1032,12 @@ class BackstopHistory(object):
         scs107_bs_cmds = copy.deepcopy(self.scs107_bs_cmds)
         # The starting time for the first scs107 command will be 1 second after the last
         # command in the TRIMMED master list
-        base_time = DateTime(self.S107_time).secs + 1
+        base_time = CxoTime(self.S107_time).secs + 1
 
         # populate the date and time slots of each command incrementing the times by one second
         for eachcmd in scs107_bs_cmds:
             eachcmd['time'] = base_time
-            eachcmd['date'] = DateTime(base_time).date
+            eachcmd['date'] = CxoTime(base_time).date
             # Increment the base time by one second
             base_time += 1.0
 
@@ -1191,7 +1191,7 @@ class BackstopHistory(object):
               They tried that once and there were myriad complaints.
         """
         # Convert the date into seconds. If it was already seconds this will not hurt.
-        trim_time = DateTime(trim_date).secs
+        trim_time = CxoTime(trim_date).secs
 
         # Now trim the list by including only those backstop commands that occur after the time.
         trimmed_list = [cmd for cmd in cmd_list if cmd['time'] < trim_time]
@@ -1232,7 +1232,7 @@ class BackstopHistory(object):
               They tried that once and there were myriad complaints.
         """
         # Convert the date into seconds. If it was already seconds this will not hurt.
-        trim_time = DateTime(trim_date).secs
+        trim_time = CxoTime(trim_date).secs
 
         # Now trim the list by KEEPING only those backstop commands that occur AFTER the time.
         trimmed_list = [cmd for cmd in cmd_list if cmd['time'] >= trim_time]
@@ -1368,8 +1368,8 @@ class BackstopHistory(object):
         # Convert the input tstart and tstop to seconds - this allows the
         # user to input either seconds or DOY format - whichever is more
         # convenient.
-        tstart = DateTime(tstart).secs
-        tstop = DateTime(tstop).secs
+        tstart = CxoTime(tstart).secs
+        tstop = CxoTime(tstop).secs
         # The Non Load Event Tracking file is an input so that different
         # users of this module can have different NLET files.
         nletfile = open(self.NLET_tracking_file_path, 'r')
@@ -1395,8 +1395,8 @@ class BackstopHistory(object):
                 # Split the line
                 splitline = nletline.split()
                 if (splitline[0] != 'GO') and \
-                   (DateTime(splitline[0]).secs > tstart) and \
-                   (DateTime(splitline[0]).secs < tstop):
+                   (CxoTime(splitline[0]).secs > tstart) and \
+                   (CxoTime(splitline[0]).secs < tstop):
 
                     # We have found an event. append it to the list while
                     # removing the \n at the end of the string
@@ -1492,7 +1492,7 @@ class BackstopHistory(object):
                 #  the time in seconds, insert the command type, and the mnemonic
                 ACIS_specific_cmds = np.r_[ACIS_specific_cmds,
                                              np.array( [ ( packet_time,
-                                                           DateTime(packet_time).secs,
+                                                           CxoTime(packet_time).secs,
                                                            cmd_type,
                                                            cmd) ],
                                                        dtype = self.ACIS_specific_dtype) ]

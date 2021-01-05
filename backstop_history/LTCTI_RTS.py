@@ -6,7 +6,7 @@ import re
 # the commands which are relevant to LTCTI runs
 from backstop_history import LTCTI_ACIS_commands
 
-from Chandra.Time import DateTime
+from cxotime import CxoTime
 
 
 class LTCTI_RTS(object):
@@ -266,7 +266,7 @@ dtype=[('date', 'S20'), ('time', '<f8'), ('statement', 'S20'), ('mnemonic', 'S20
         # Convert the RTS start date into seconds. We will use this
         # to calculate the time of each command in the RTS
         present_date = RTS_start_date
-        present_time = DateTime(RTS_start_date).secs
+        present_time = CxoTime(RTS_start_date).secs
         
         # Calculate the duration of the CTI run, in seconds, as if it was NOT interrupted
         # by a Return To Science....i.e. it ran to completion and was
@@ -274,10 +274,10 @@ dtype=[('date', 'S20'), ('time', '<f8'), ('statement', 'S20'), ('mnemonic', 'S20
         cti_duration_secs = self.convert_RTS_DELTA_to_secs(NUM_HOURS)
         
         # Convert the RTS start date to seconds.
-        present_time = DateTime(RTS_start_date).secs
+        present_time = CxoTime(RTS_start_date).secs
                 
         # Create an empty array with the RTS_dtype
-        RTS_cmds = np.array( [], dtype = self.RTS_dtype)
+        RTS_cmds = np.array([], dtype=self.RTS_dtype)
               
         # Form the full path to the appropriate RTS file
         rts_file_path = os.path.join(self.RTS_file_loc, self.RTS_name+'.RTS')
@@ -347,7 +347,7 @@ dtype=[('date', 'S20'), ('time', '<f8'), ('statement', 'S20'), ('mnemonic', 'S20
                     dt = 0.0
         
                 # Whether you had a delta or not, convert the present time to a date
-                present_date = DateTime(present_time).date 
+                present_date = CxoTime(present_time).date 
         
                 # Now if equal_items_list is not empty, after you removed the DELTA
                 # line, then the RTS line had a 
