@@ -384,7 +384,7 @@ class BackstopHistory(object):
                              in ofls directory that represents the  built load.
                                 -  list of dictionary items
         """
-        backstop_file_path = globfile(os.path.join(oflsdir, 'CR*.backstop'))
+        backstop_file_path = globfile(os.path.join(oflsdir, 'CR[0-9]*.backstop'))
 
         self.logger.info("GET_BS_CMDS - Using backstop file %s" % backstop_file_path)
 
