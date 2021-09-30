@@ -1,0 +1,121 @@
+﻿
+Release Notes for Version 2.1.0 of Backstop History
+
+
+
+Change Description
+==================
+
+Recently, SCS-106 was updated to leave 3 FEPs on rather than no FEPs on.
+SCS-106 is run as part of the SCS-107 sequence. 
+
+Therefore thermal model history assembly requires that this change be reflected
+in any shutdown: both science-only shutdowns as well as Full Stops.  Also, the 
+ACIS Team recently added new power commands which have to be handled by Backstop History.
+
+These were the drivers for the release of this version of Backstop History. 
+Several changes had been underway for some time and are incorporated in this release.
+
+The previous version of Backstop History and acis_thermal_check (ATC) placed a major loop
+inside the ACISStateBuilder class of state_builder.py wherein ATC was controlling the assembly
+of a backstop history.  Presently, ATC detects when to end the backchaining and also assesses 
+the types of loads (Normal, TOO, SCSD-107 Full Stop) for each load in the backchain. 
+These fucntions belong inside Backstop History so that All ATC does is request an assembled 
+history given the pertinent information needed at the start of the assembly. This was 
+removed from ATC and moved into Backstop History. In addition, the need for a function 
+to convert backstop commands from a list of dict to a CommandTable is removed.
+
+In the present production version of Backstop History, no record was kept of the assembled history.
+In this new version, after a command history has been fully assembled, including any 
+necessary command sequences (e.g. LTCTI's, Maneuvers, SCS-107 etc.) a CR*.backstop.hist 
+file is written out to the directory of the load under review: the root of the file name
+being the same as the review load CR*.backstop file, with ".hist" appended. This .hist file 
+is writtern out in CR*.backstop format and can be run through a models.  This provides
+both special case testing (using a test NLET file) as well as a means to check the resultant
+output of Backstop History.
+
+CTI command and maneuver templates were remoived from the code and transformed into a data file.
+This file can be updated as new power commands are created without touching the executable code.
+Also one file that contained a variety of command definitions (e.g. AA0000000) is eliminated.
+This, in turn eliminated classes and simplified the code.
+
+Methods that were never used in Backstop History were removed.
+
+A local logger was build for Backstop History which will identify the source of the
+logger message.  The level of verbosity is captured by ATC and passed to the ACIS state
+builder.
+
+Comments were added or modified for clarification.
+
+
+Files Changed:
+============== 
+
+
+
+Both of these PR's must be merged at the same time.
+
+
+
+
+Testing:
+======== 
+
+These regression tests were run on the 1DPAMZT and ACISFP_CHECK models.
+
+
+Regression Test Suite:
+
+APR0217B
+AUG2517C
+AUG3017A
+JUL2717A
+JUL3117B
+MAR0617A
+MAR0817B
+MAR1117A
+MAR1517B
+MAR2017E
+SEP0417A
+SEP0917C 
+
+SEP0917 SCS-107 with LTCTI
+SEP1317 Return to Science load after SCS-107
+OCT2118 STOP Many Maneuvers, 4 LTCTI's (Last LTCTI cut by Resumption of science)
+SEP0619 STOP Maneuver LTCTI Maneuver
+MAY2420 TOO
+MAY2620 STOP Maneuver-Only, Maneuver 90 LTCTI 
+MAY2820 Normal(RTS) Maeuvers, LTCTI's, cuts MAY26 LTCTI
+JUL2720 Normal, LTCTI during Pause
+AUG3120 Maneuver-Only WSPOW0002A via CAP
+JUL0821 TOO
+JUL2621 Normal
+
+APR3020 - Hand edited test load to test LTCTI handling during TOO
+
+These regression tests were run on the 1DPAMZT and ACIS Focal Plane models.
+
+Since the "gold standard" for the regression tests expects to see zero FEP's on after an
+SCS-106 run, differences were expected and acounted for.
+
+
+Interface impacts
+=================
+
+None outside of acis_thermal_check calls to Backstop History.
+
+
+Review
+====== 
+
+Objectives and Results by ACIS Ops
+
+
+Deployment Plan
+===============
+
+Installation of Backstop History and acis_thermal_check will occur after the
+start of execution of this week's Review Load.
+
+
+
