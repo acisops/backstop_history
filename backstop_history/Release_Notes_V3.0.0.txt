@@ -45,6 +45,9 @@ A local logger was build for Backstop History which will identify the source of 
 logger message.  The level of verbosity is captured by ATC and passed to the ACIS state
 builder.
 
+Also includes changes John made which ake the role of the run_start argument much more clear.
+
+
 Comments were added or modified for clarification.
 
 

@@ -129,7 +129,8 @@ def config_logger(verbose):
 class Backstop_History_Class(object):
 
     def __init__(self, cont_file_name='ACIS-Continuity.txt',
-                 NLET_tracking_file_path='/data/acis/LoadReviews/NonLoadTrackedEvents.txt', verbose=2):
+                 NLET_tracking_file_path='/data/acis/LoadReviews/NonLoadTrackedEvents.txt',
+                 verbose=2):
 
         logger = config_logger(verbose)
 
@@ -152,6 +153,7 @@ class Backstop_History_Class(object):
         self.continuity_file_name = cont_file_name
 
         self.NLET_tracking_file_path = NLET_tracking_file_path
+        
         self.STOP_time = None
         self.S107_time = None
         self.TOO_ToFC = None
@@ -244,7 +246,7 @@ class Backstop_History_Class(object):
 
             # Read the first line...the path to the continuity load. The
             # continuity path in the file is hardwired to a /data/acis path,
-            # independent of user-specified `oflsdir` (e.g.
+            # independent of user-specified `oflsdir` (e.g.BackstopHistory.py
             # /data/acis/LoadReviews/2018/MAY2118/ofls), so if a non-standard
             # OFLS dir path is allowed then fix that by putting the last 3 parts
             # (2018/MAY2118/ofls) onto the oflsdir root.
@@ -280,8 +282,8 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    #  UPDATED -  read_CR_backstop_file  - Given a full path to a CR*.backstop file, read in,
-    #                            process, and return the commands
+    #  read_CR_backstop_file  - Given a full path to a CR*.backstop file, read in,
+    #                           process, and return the commands
     #
     #-------------------------------------------------------------------------------
     def read_CR_backstop_file(self, backstop_file_path):
@@ -301,8 +303,8 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #                   
-    # UPDATED -   get_CR_bs_cmds - Get the backstop commands that live in the OFLS directories.
-    #                 These always start with the characters "CR"
+    # get_CR_bs_cmds - Get the backstop commands that live in the OFLS directories.
+    #                  These always start with the characters "CR"
     #
     #-------------------------------------------------------------------------------
     def get_CR_bs_cmds(self, oflsdir):
@@ -350,9 +352,9 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    #  NEW -  Read_Review_load - Method which assumes the directory you gave it contains
-    #                      the Review Load Backstop file. It reads the file and
-    #                      saves the commands to  the Master list
+    #  Read_Review_load - Method which assumes the directory you gave it contains
+    #                     the Review Load Backstop file. It reads the file and
+    #                     saves the commands to  the Master list
     #
     #-------------------------------------------------------------------------------
     def Read_Review_Load(self, oflsdir):
@@ -377,9 +379,9 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    #  UPDATED -   get_vehicle_only_bs_cmds - Get the backstop commands that live in the
-    #                               OFLS directories. These always start with the
-    #                               characters "VR"
+    #  get_vehicle_only_bs_cmds - Get the backstop commands that live in the
+    #                             OFLS directories. These always start with the
+    #                             characters "VR"
     #
     #-------------------------------------------------------------------------------
     def get_VR_bs_cmds(self, ofls_dir):
@@ -412,7 +414,7 @@ class Backstop_History_Class(object):
 
 #-------------------------------------------------------------------------------
 #
-# NEW - assemble_history - Given the load directory, and a time, assemble the
+# assemble_history - Given the load directory, and a time, assemble the
 #                    history starting with the review load - which was assumed
 #                    to already be loaded in self.master_list - and back chaining
 #                    until the earliest command time in the assembled load 
@@ -435,7 +437,7 @@ class Backstop_History_Class(object):
             Inputs: ofls_dir - Path to the Review Load Directory
                                e.g. /data/acis/LoadReviews/2021/JUN2821/ofls/
 
-                      tbegin - Time, in yday, which stops the backchaning of
+                      tbegin - Time, in yday, which stops the backchaining of
                                continuity loads. 
                                   - Typically the TOFC of the Continuity load
 
@@ -446,9 +448,13 @@ class Backstop_History_Class(object):
 
         # Convert tbegin to cxcsec if necessary
         if type(tbegin) is str:
+
             tbegin_time = round(Time(tbegin, format = 'yday', scale = 'utc').cxcsec,1)
         else:
             tbegin_time =tbegin
+            tbegin = round(Time(tbegin_time, format = 'cxcsec', scale = 'utc').yday, 1)
+
+        self.logger.debug('\nTBEGIN_DATE IS: %s, TEBEGIN TIME IS: %s' % (tbegin, tbegin_time))
 
         # Save the interrupt flag and the OFLS directory into class attributes
         self.interrupt = interrupt
@@ -747,7 +753,7 @@ class Backstop_History_Class(object):
 
 #-------------------------------------------------------------------------------
 #
-# UPDATED - Process_MAN - process the submitted maneuver line from the NLET file
+# Process_MAN - process the submitted maneuver line from the NLET file
 #
 #-------------------------------------------------------------------------------
     def Process_MAN(self, nlet_event):
@@ -801,7 +807,7 @@ class Backstop_History_Class(object):
 
 #-------------------------------------------------------------------------------
 #
-# UPDATED - Process_LTCTI - process the submitted LTCTI line from the NLET file
+# Process_LTCTI - process the submitted LTCTI line from the NLET file
 #
 #-------------------------------------------------------------------------------
     def Process_LTCTI(self, ltcti_event, trim_date):
@@ -936,7 +942,7 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------eachcmd['date']
     #
-    # UPDATED -  Process_Power_Cmd
+    # Process_Power_Cmd
     #
     #-------------------------------------------------------------------------------
     def Process_Power_Cmd(self, power_cmd_event):
@@ -965,7 +971,7 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    # UPDATED - Process_Cmds
+    # Process_Cmds
     #
     #-------------------------------------------------------------------------------
     def Process_Cmds(self, cmd_list, BEGIN_date):
@@ -1025,7 +1031,7 @@ class Backstop_History_Class(object):
 
     #--------------------------------------------------------------------------
     #
-    # UPDATED - WriteCommands to file - Write the specified commands to a file
+    # WriteCommands to file - Write the specified commands to a file
     #
     #--------------------------------------------------------------------------
     def Write_Commands_to_File(self, cmd_list, outfile_path, outfile_mode, comment = None):
@@ -1063,7 +1069,7 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    # UPDATED - Trim_bs_commands_After_Date - Given a list of backstop commands, remove any command
+    # Trim_bs_commands_After_Date - Given a list of backstop commands, remove any command
     #                               prior to the specified time
     #
     #                 INPUTS: Chandra time 
@@ -1102,7 +1108,7 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    # UPDATED - Trim_bs_cmds_Before_Date - Given a list of backstop commands, 
+    # Trim_bs_cmds_Before_Date - Given a list of backstop commands, 
     #                            remove any command on or 
     #                            prior to the specified time
     #
@@ -1144,7 +1150,7 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    # UPDATED - Backchain - Given a base directory, a starting load (base_load), and a
+    # Backchain - Given a base directory, a starting load (base_load), and a
     #             chain length, this method will successively backtrack through the
     #             Continuity text files of each load starting with the
     #             base load, and record the continuity information in a numpy array
@@ -1246,7 +1252,7 @@ class Backstop_History_Class(object):
 
     #-------------------------------------------------------------------------------
     #
-    # UPDATED - Find_Events_Between_Dates - Given a path to a Non Load Event Tracking file,
+    # Find_Events_Between_Dates - Given a path to a Non Load Event Tracking file,
     #                             a start time and a stop time, search the Tracking
     #                             file for any NLET event that occurred between the 
     #                             start and stop times.
