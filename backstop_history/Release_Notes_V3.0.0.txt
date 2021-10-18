@@ -19,8 +19,8 @@ Several changes had been underway for some time and are incorporated in this rel
 The previous version of Backstop History and acis_thermal_check (ATC) placed a major loop
 inside the ACISStateBuilder class of state_builder.py wherein ATC was controlling the assembly
 of a backstop history.  Presently, ATC detects when to end the backchaining and also assesses 
-the types of loads (Normal, TOO, SCSD-107 Full Stop) for each load in the backchain. 
-These fucntions belong inside Backstop History so that All ATC does is request an assembled 
+the types of loads (Normal, TOO, SCS-107, Full Stop) for each load in the backchain. 
+These functions belong inside Backstop History so that All ATC does is request an assembled 
 history given the pertinent information needed at the start of the assembly. This was 
 removed from ATC and moved into Backstop History. In addition, the need for a function 
 to convert backstop commands from a list of dict to a CommandTable is removed.
@@ -30,7 +30,7 @@ In this new version, after a command history has been fully assembled, including
 necessary command sequences (e.g. LTCTI's, Maneuvers, SCS-107 etc.) a CR*.backstop.hist 
 file is written out to the directory of the load under review: the root of the file name
 being the same as the review load CR*.backstop file, with ".hist" appended. This .hist file 
-is writtern out in CR*.backstop format and can be run through a models.  This provides
+is writtern out in CR*.backstop format and can be run through a model.  This provides
 both special case testing (using a test NLET file) as well as a means to check the resultant
 output of Backstop History.
 
@@ -45,7 +45,7 @@ A local logger was build for Backstop History which will identify the source of 
 logger message.  The level of verbosity is captured by ATC and passed to the ACIS state
 builder.
 
-Also includes changes John made which ake the role of the run_start argument much more clear.
+Also includes changes John made which make the role of the run_start argument much more clear.
 
 
 Comments were added or modified for clarification.

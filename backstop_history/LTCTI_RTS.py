@@ -5,7 +5,7 @@ import re
 from astropy.time import Time
 
 """
-    These functions allows the user to convert a FOT, ACIS, LTCTI, RTS file, along with
+    These functions allow the user to convert a FOT, ACIS, LTCTI, RTS file, along with
     information found in a FOT Request, and generate an array where each line in the RTS file is
     processed. 
 
