@@ -246,7 +246,7 @@ class Backstop_History_Class(object):
 
             # Read the first line...the path to the continuity load. The
             # continuity path in the file is hardwired to a /data/acis path,
-            # independent of user-specified `oflsdir` (e.g.BackstopHistory.py
+            # independent of user-specified `oflsdir` (e.g.
             # /data/acis/LoadReviews/2018/MAY2118/ofls), so if a non-standard
             # OFLS dir path is allowed then fix that by putting the last 3 parts
             # (2018/MAY2118/ofls) onto the oflsdir root.
@@ -447,7 +447,7 @@ class Backstop_History_Class(object):
         self.logger.debug('--------------------ASSEMBLING HISTORY. BACKSTOP LIST IS: %s' %  (self.backstop_file_list))
 
         # Convert tbegin to cxcsec if necessary
-        if type(tbegin) is str:
+        if isinstance(tbegin, str):
 
             tbegin_time = round(Time(tbegin, format = 'yday', scale = 'utc').cxcsec,1)
         else:
@@ -689,7 +689,7 @@ class Backstop_History_Class(object):
             event_list = self.Find_Events_Between_Dates(self.master_ToFC, self.end_event_time)
 
             # ....and if there are events to process.......
-            if event_list != []:
+            if len(event_list) > 0:
 
                 # There are, so process them all
                 for eachevent in event_list:
@@ -773,7 +773,13 @@ class Backstop_History_Class(object):
         q3 = man_event_list[6]
         q4 = man_event_list[7]
 
-        # If this is a legal maneuver, process it
+        # If this is a legal maneuver, process it.
+        # Other LR code (history-files.pl) explicitly sets the pitch to 0.0 in
+        # the NLET file if the user did not or could not specify the 4
+        # quaternions. The 4 Quaternion entries are set to a bogus value as 
+        # well. Since we know the pitch ought not get below 45, and 0.0 is 
+        # not possible then explicitly setting will work. It is converted 
+        # from a string value - not a calculation.
         if pitch != 0.0:
 
             self.logger.info("NEW MANEUVER FOUND %s pitch: %s" % (MAN_date, str(pitch)))
@@ -1155,7 +1161,7 @@ class Backstop_History_Class(object):
     #             Continuity text files of each load starting with the
     #             base load, and record the continuity information in a numpy array
     #
-    #                 INPUTS: base_dir  (e.g. '/data/acis/LoadReviews/2017/')2021:179:04:00:02.313
+    #                 INPUTS: base_dir  (e.g. '/data/acis/LoadReviews/2017/')
     #                         base_load (e.g. 'AUG3017')
     #                         chain_length - the number of backtracks you want
     #                         to make.
