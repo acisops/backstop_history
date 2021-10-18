@@ -30,11 +30,11 @@ In this new version, after a command history has been fully assembled, including
 necessary command sequences (e.g. LTCTI's, Maneuvers, SCS-107 etc.) a CR*.backstop.hist 
 file is written out to the directory of the load under review: the root of the file name
 being the same as the review load CR*.backstop file, with ".hist" appended. This .hist file 
-is writtern out in CR*.backstop format and can be run through a model.  This provides
+is written out in CR*.backstop format and can be run through a model.  This provides
 both special case testing (using a test NLET file) as well as a means to check the resultant
 output of Backstop History.
 
-CTI command and maneuver templates were remoived from the code and transformed into a data file.
+CTI command and maneuver templates were removed from the code and transformed into a data file.
 This file can be updated as new power commands are created without touching the executable code.
 Also one file that contained a variety of command definitions (e.g. AA0000000) is eliminated.
 This, in turn eliminated classes and simplified the code.
@@ -90,7 +90,7 @@ OCT2118 STOP Many Maneuvers, 4 LTCTI's (Last LTCTI cut by Resumption of science)
 SEP0619 STOP Maneuver LTCTI Maneuver
 MAY2420 TOO
 MAY2620 STOP Maneuver-Only, Maneuver 90 LTCTI 
-MAY2820 Normal(RTS) Maeuvers, LTCTI's, cuts MAY26 LTCTI
+MAY2820 Normal(RTS) Maneuvers, LTCTI's, cuts MAY26 LTCTI
 JUL2720 Normal, LTCTI during Pause
 AUG3120 Maneuver-Only WSPOW0002A via CAP
 JUL0821 TOO
@@ -100,8 +100,6 @@ APR3020 - Hand edited test load to test LTCTI handling during TOO
 
 These regression tests were run on the 1DPAMZT and ACIS Focal Plane models.
 
-Since the "gold standard" for the regression tests expects to see zero FEP's on after an
-SCS-106 run, differences were expected and acounted for.
 
 
 Interface impacts
