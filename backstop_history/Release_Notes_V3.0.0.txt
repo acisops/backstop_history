@@ -28,7 +28,7 @@ to convert backstop commands from a list of dict to a CommandTable is removed.
 In the present production version of Backstop History, no record was kept of the assembled history.
 In this new version, after a command history has been fully assembled, including any 
 necessary command sequences (e.g. LTCTI's, Maneuvers, SCS-107 etc.) a CR*.backstop.hist 
-file is written out to the directory of the load under review: the root of the file name
+file is written out to the directory specified by the model argument --outdir: the root of the file name
 being the same as the review load CR*.backstop file, with ".hist" appended. This .hist file 
 is written out in CR*.backstop format and can be run through a model.  This provides
 both special case testing (using a test NLET file) as well as a means to check the resultant
