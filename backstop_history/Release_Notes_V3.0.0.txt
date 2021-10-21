@@ -54,8 +54,13 @@ Comments were added or modified for clarification.
 Files Changed:
 ============== 
 
+Original SCS-106 changes merged but not yet put into production:
 https://github.com/acisops/backstop_history/pull/20
+https://github.com/acisops/backstop_history/pull/21
+
+Additional PR's which write the .hist files to the model --outdir directory:
 https://github.com/acisops/acis_thermal_check/pull/41
+https://github.com/acisops/acis_thermal_check/pull/42
 
 
 Both of these PR's must be merged at the same time.
