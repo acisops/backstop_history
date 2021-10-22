@@ -130,13 +130,16 @@ class Backstop_History_Class(object):
 
     def __init__(self, cont_file_name='ACIS-Continuity.txt',
                  NLET_tracking_file_path='/data/acis/LoadReviews/NonLoadTrackedEvents.txt',
+                 outdir = None,
                  verbose=2):
 
         logger = config_logger(verbose)
 
         self.logger = logger
 
-        self.logger.debug('LOGGER ************************* BHC Init')
+        self.logger.debug('LOGGER ************************* BHC Init' )
+
+        self.outdir = outdir
 
         self.review_file_name = None
         self.review_file_tstart = None
@@ -739,9 +742,9 @@ class Backstop_History_Class(object):
         # The history has been assembled. Write it out to a
         # file in the OFLS directory whose naming convention is:
         #   CR*.backstop.hist
-        filespec = os.path.join(ofls_dir, self.review_file_name+'.hist')
+        filespec = os.path.join(self.outdir, self.review_file_name+'.hist')
 
-        self.logger.debug('Writing assembled history to: %s' % (filespec) )
+        self.logger.info('Writing assembled history to: %s' % (filespec) )
 
         # Set the History File Path attribute
         self.assembled_hist_file_path = filespec
