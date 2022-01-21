@@ -45,6 +45,15 @@
 #           - Created local logger
 #           - Logger verbosity level transmitted from model invocation command line
 #
+# Update: November 24, 2021
+#         Gregg Germain
+#         - Modifications which handle the case where a load was reviewed as a full
+#           load, meaning both science and vehicle SCS slots will be activated, or
+#           the case where, after the review of a "full" load, only the vehicle SCS's
+#           were actually activated.  This is done by changes to LR which create
+#           additional ACIS-Continuity.txt load types.
+#           These new load types tell Assemble_History to read the CR*.backstop
+#           or VR*.backstop file in the continuity directory
 ################################################################################
 from __future__ import print_function
 
@@ -137,7 +146,7 @@ class Backstop_History_Class(object):
 
         self.logger = logger
 
-        self.logger.debug('LOGGER ************************* BHC Init' )
+        self.logger.debug('LOGGER ************************* BHC Init    VO VERSION' )
 
         self.outdir = outdir
 
@@ -270,7 +279,8 @@ class Backstop_History_Class(object):
 
             # If the review load type is not "Normal", grab the interrupt time
             # or set the interrupt time to "None"
-            if review_load_type.upper() != "NORMAL":
+            if (review_load_type.upper() != 'NORMAL') and \
+               (review_load_type.upper() != 'VO_NORMAL'):
                 interrupt_time = split_type_line[1]
             else:
                 interrupt_time = None
@@ -329,7 +339,7 @@ class Backstop_History_Class(object):
               into the master list.
 
         """
-        backstop_file_path = globfile(os.path.join(oflsdir, 'CR[0-9]*.backstop'))
+        backstop_file_path = globfile(os.path.join(oflsdir, 'CR*.backstop'))
 
         self.logger.debug("GET_CR_BS_CMDS - Using backstop file %s" % backstop_file_path)
 
@@ -348,8 +358,7 @@ class Backstop_History_Class(object):
         self.logger.info('GET_CR_BS_CMDS - Found %d backstop commands between %s and %s' % (len(bs_cmds),
                                                                                             Time(bs_cmds[0]['time'], format = 'cxcsec', scale = 'utc').yday,
                                                                                             Time(bs_cmds[-1]['time'], format = 'cxcsec', scale = 'utc').yday))
-        # Return both the backstop commands and the
-        # name of the backstop file
+        # Return both the backstop commands and the name of the backstop file
         return bs_cmds, bs_name
 
 
@@ -475,9 +484,9 @@ class Backstop_History_Class(object):
 
         # WHILE
         # The big while loop that backchains through previous loads and concatenates the
-        # proper load sections and possibly events (e.,g. maneuivers)to the Master List
+        # proper load sections and possibly events (e.,g. maneuvers)to the Master List
         while self.master_ToFC > tbegin_time:
-
+            
             # Obtain the Continuity information of the present ofls directory
             cont_load_path, present_load_type, scs107_date = self.get_continuity_file_info(present_ofls_dir)
 
@@ -485,15 +494,26 @@ class Backstop_History_Class(object):
 
 
             # Read the commands from the Continuity file
-            cont_cr_cmds, cont_file_name = self.get_CR_bs_cmds(cont_load_path)
+            # The value of present_load_type indicates whether to read the CR*.backstop file
+            # or the VR*.backstop file.
+            
+            # Indicators of load types which require reading the VR*.backstop file
+            self.vehicle_types = ['VO_NORMAL', 'VO_TOO', 'VO_SCS-107', 'VO_STOP']
+            
+            if present_load_type.upper() in self.vehicle_types:
+                cont_cr_cmds, cont_file_name = self.get_VR_bs_cmds(cont_load_path)
+            else:
+                cont_cr_cmds, cont_file_name = self.get_CR_bs_cmds(cont_load_path)
+
 
             #---------------------- NORMAL ----------------------------------------
             # If the PRESENT (i.e. NOT Continuity) load type is "normal" then grab 
             # the continuity command set and concatenate those commands to the start of 
             # the Master List.
-            if present_load_type.upper() == 'NORMAL':
+            if (present_load_type.upper() == 'NORMAL') or\
+               (present_load_type.upper() == 'VO_NORMAL'):
 
-                self.logger.debug('Processing Normal: %s' % (self.master_list[-1]['date']))
+                self.logger.debug('Processing %s: %s' % (present_load_type, self.master_list[-1]['date']))
 
                 # Next step is to set the Master List equal to the concatenation of
                 # the continuity load commands and the review load commands
@@ -516,8 +536,9 @@ class Backstop_History_Class(object):
             # the continuity command set, trim the command set to exclude those
             # Commands discarded by the TOO cut, concatenate the remaining 
             # continuity commands to the start of the Master List.
-            elif present_load_type.upper() == 'TOO':
-                self.logger.debug('Processing TOO at date: %s' % (scs107_date))
+            elif (present_load_type.upper() == 'TOO') or \
+                 (present_load_type.upper() == 'VO_TOO'):
+                self.logger.debug('Processing %s  at date: %s' % (present_load_type, scs107_date))
 
                 # Convert the TOO cut time found in the ACIS-Continuity.txt file to
                 # cxcsec
@@ -547,9 +568,10 @@ class Backstop_History_Class(object):
             #    2) Add on the SCS-107 commands that were executed at the Cut time
             #    3) Look for and insert any events (power commands, maneuvers, LTCTI's)
             #    4) append all these commands to the start of the Master List.
-            elif present_load_type.upper() == 'STOP':
+            elif (present_load_type.upper() == 'STOP') or \
+                 (present_load_type.upper() == 'VO_STOP'):
 
-                self.logger.debug('Processing FULL STOP at date: %s' % (scs107_date))
+                self.logger.debug('Processing %s at date: %s' % (present_load_type, scs107_date))
 
                 # Convert the SCS-107 cut time found in the ACIS-Continuity.txt file to
                 # cxcsec
@@ -595,9 +617,10 @@ class Backstop_History_Class(object):
             #         - Trim those before the SCS-107 time and any after the Review Load start time
             #         - Concat to master_list and sort
             # 
-            elif present_load_type.upper() == 'SCS-107':
+            elif (present_load_type.upper() == 'SCS-107') or \
+                 (present_load_type.upper() == 'VO_SCS-107'):
                 # Inform coder that you are processing an SCS-107
-                self.logger.debug('Processing SCS-107 at date: %s' % (scs107_date))
+                self.logger.debug('Processing %s  at date: %s' % (present_load_type, scs107_date))
 
                 # Convert the TOO cut time found in the ACIS-Continuity.txt file to
                 # cxcsec
@@ -611,7 +634,7 @@ class Backstop_History_Class(object):
                 processed_scs107_cmds = self.Process_Cmds(self.raw_scs107_cmd_list, scs107_date)
 
                 # Append the processed SCS-107 commands to the continuity 
-                # command list
+                # command list. This includes the WSPOW0002A
                 cont_cr_cmds = np.append(processed_scs107_cmds, cont_cr_cmds, axis=0)
 
                 # Sort the continuity list based upon the time column
@@ -720,8 +743,8 @@ class Backstop_History_Class(object):
 
                     # POWER COMMAND
                     elif splitline[1] in self.power_cmd_list:
-                        # We probably ran a CAP to execute a power command such as WSPOW0002A
-                        # So insert the power command into the historical Backstop file you are building.
+                        # The SCS-107 now executes the power command WSPOW0002A
+                        # So insert any OTHER  power command into the historical Backstop file you are building.
                         power_cmds = self.Process_Power_Cmd(eachevent)
 
                         # Append the processed POWER commands
