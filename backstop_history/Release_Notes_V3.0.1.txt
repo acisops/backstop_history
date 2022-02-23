@@ -1,0 +1,56 @@
+﻿
+Release Notes for Version 3.0.1 of Backstop History
+
+
+
+Change Description
+==================
+
+tbegin is used by backstop_History to know how far back in time to backchain loads.
+tbegin is supplied by the user of backstop_History. The Assemble_History method
+generated both a DOY and Chandra Seconds version of that time, and rounded the
+time off. Rounding is unnecessary and was incorrectly applied in one instance.
+The incorrect application did not affect the operation of the program as it was 
+done only for logger purposes.
+
+Also the initial logger comment under "debug" was modified.
+
+
+Comments were added or modified for clarification.
+
+
+Files Changed:
+============== 
+
+https://github.com/acisops/backstop_history/pull/23
+
+
+
+
+Testing:
+======== 
+
+Unit and functional testing completed to assure that the
+assembled histories were unchanged from previous runs.
+
+
+
+Interface impacts
+=================
+
+None.
+
+
+Review
+====== 
+
+Objectives and Results by ACIS Ops
+
+
+Deployment Plan
+===============
+
+Installation of Backstop History will occur once approved by FSDS.
+
+
+
