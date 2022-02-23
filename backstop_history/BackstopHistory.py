@@ -146,7 +146,7 @@ class Backstop_History_Class(object):
 
         self.logger = logger
 
-        self.logger.debug('LOGGER ************************* BHC Init    VO VERSION' )
+        self.logger.debug('LOGGER ************************* BHC Init' )
 
         self.outdir = outdir
 
@@ -458,13 +458,14 @@ class Backstop_History_Class(object):
         """
         self.logger.debug('--------------------ASSEMBLING HISTORY. BACKSTOP LIST IS: %s' %  (self.backstop_file_list))
 
-        # Convert tbegin to cxcsec if necessary
+        # Convert tbegin to cxcsec if necessary; have both DOY string and
+        # cxcsec available.
         if isinstance(tbegin, str):
 
-            tbegin_time = round(Time(tbegin, format = 'yday', scale = 'utc').cxcsec,1)
+            tbegin_time = Time(tbegin, format = 'yday', scale = 'utc').cxcsec
         else:
             tbegin_time =tbegin
-            tbegin = round(Time(tbegin_time, format = 'cxcsec', scale = 'utc').yday, 1)
+            tbegin = Time(tbegin_time, format = 'cxcsec', scale = 'utc').yday
 
         self.logger.debug('\nTBEGIN_DATE IS: %s, TEBEGIN TIME IS: %s' % (tbegin, tbegin_time))
 
