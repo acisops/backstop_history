@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    uses: sot/skare3/.github/workflows/package_build.yml@master
+    uses: acisops/skare3/.github/workflows/package_build.yml@master
     with:
       noarch: true
     secrets:
@@ -22,6 +22,6 @@ jobs:
 
   upload:
     needs: [build]
-    uses: sot/skare3/.github/workflows/package_upload.yml@master
+    uses: acisops/skare3/.github/workflows/package_upload.yml@master
     with:
       channel: masters
