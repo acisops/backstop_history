@@ -1,0 +1,79 @@
+!$Revision: 3.1 $
+!$Date: 2022/04/28 12:12:12 $
+!=======================================================================
+!
+!  NAME: 1_END_ECS.RTS
+!
+!  DESCRIPTION: This RTS is used to end an ACIS long ECS measurement
+!  being executed by commanding in SCS 135.  This RTS may be used at
+!  any time to:
+!    1. Terminate SCS 135
+!    2. End ACIS science run, power down video boards, power 3 FEPs, and 
+!       dump the system configuration
+!    3. Disable RADMON (May be redundant)
+!
+!  This mimics the SCS 135 commanding to end the science run without the
+!  delay.
+!
+!
+!  INVOCATION: FOT Request
+!
+!    RTSLOAD,1_END_ECS,SCS_NUM=nnn
+!
+!  ARGUMENTS:
+!  Name           Type               Description
+!  -------------- ------------------ -----------------------------------
+!  None 
+!
+!
+!  EXECUTED BY/WHEN: OC, CC
+!
+!  AUTHORIZED BY: SI SSE
+!
+!  CAUTIONS / RESTRICTIONS:
+!  
+!  HISTORY
+!  Date         Author          Description
+!  ------------ --------------- ----------------------------------------
+!  4-19-22      K. Gage         Original Version adapted from 
+!                               1_END_CTI.RTS to remove HRC commanding
+!                               and change power down command to leave
+!                               3 FEPs on.
+!
+!=======================================================================
+
+SCS_CATEGORY, VEHICLE
+
+!========================================================================
+! 1.	Terminate SCS 135
+!========================================================================
+/CMD, COTERMSX, COTERMS1=135
+
+!========================================================================
+! 2.	Stop Science
+!========================================================================
+ACIS,AA00000000, DELTA=00:00:01.000
+
+!========================================================================
+! 3.	Stop Science
+!========================================================================
+ACIS,AA00000000,DELTA=00:00:10.000
+
+!========================================================================
+! 4.	Video Board Power Down, 3 FEPs on 
+!========================================================================
+ACIS,WSPOW0002A,DELTA=00:00:04.000
+
+!========================================================================
+! 5.	Dump System Configuration
+!========================================================================
+ACIS,RS_0000001,DELTA=00:01:03.000
+
+!========================================================================
+! 6.	Disable Radiation Monitor 
+!========================================================================
+/CMD, OORMPDS, DELTA=00:00:04.000
+
+!========================================================================
+! End of RTS
+!========================================================================
