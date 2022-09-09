@@ -54,6 +54,16 @@
 #           additional ACIS-Continuity.txt load types.
 #           These new load types tell Assemble_History to read the CR*.backstop
 #           or VR*.backstop file in the continuity directory
+#
+# Update: August 16, 2022
+#               Gregg Germain
+#               V4.3
+#               - Added method to extract commands, based on tokens,  from
+#                 the master list and create a new array
+#               - Substituted 1_ECS4.RTS for 1_4_CTI.RTS
+#               - Fixed SCS-107 SIMTRANS location
+#               - Fixed comment typos
+#       
 ################################################################################
 from __future__ import print_function
 
@@ -118,8 +128,8 @@ def config_logger(verbose):
 
     # Set numerical values for the different log levels
     loglevel = {0: logging.CRITICAL,
-                1: logging.INFO,
-                2: logging.DEBUG}.get(verbose, logging.DEBUG)
+                        1: logging.INFO,
+                        2: logging.DEBUG}.get(verbose, logging.DEBUG)
 
     # Set the logging level at the LOGGER instance
     logger.setLevel(loglevel)
@@ -146,10 +156,11 @@ class Backstop_History_Class(object):
 
         self.logger = logger
 
-        self.logger.debug('LOGGER ************************* BHC Init' )
+        self.logger.debug('GIT_BSH: LOGGER ************************* BSHC Init' )
 
         self.outdir = outdir
 
+        # Initialize variables holding review load information.
         self.review_file_name = None
         self.review_file_tstart = None
         self.review_file_tstop = None
@@ -811,7 +822,7 @@ class Backstop_History_Class(object):
 
             self.logger.info("NEW MANEUVER FOUND %s pitch: %s" % (MAN_date, str(pitch)))
 
-            # Create the time stamped scs-107 command set using MAN_date as the start time
+            # Create the time stamped maneuver command set using MAN_date as the start time
             processed_maneuver_cmds = self.Process_Cmds(self.raw_man_cmd_list, MAN_date)
 
             # Now insert the Quaternion values into the MP_TARGQUAT params section.
@@ -1473,4 +1484,39 @@ class Backstop_History_Class(object):
         Return the contents of attribute: review_file_tstop
         """
         return self.review_file_tstop
-
+    
+    #--------------------------------------------------------------------------------
+    #
+    # Extract_by_Token - New BSH method
+    #
+    #--------------------------------------------------------------------------------
+    def Extract_by_Token(self, token_list, cmd_array):
+        """
+        Given a list of tokens, and an array of backstop commands, of the same dtype
+        as Backstop History master_list, extract any row whose "commands" column
+        contains any of the tokens in the token list.  Place the extracted rows in an
+        array of the same dtype and return that array
+    
+        inputs: token_list - list of tokens to search for [e.g. ["OORMPDS", "EPERIGEE"]
+                                       The tokens must be strings.
+    
+                   cmd_array - An array which is a history of CR*.backstop commands 
+                                       which was assembled by Backstop History and is of the
+                                       same dtype as Backstop History master_list
+    
+        outputs: - extracted_array - Array containing any extracted rows. The array
+                                                      be empty
+        """
+        extracted_array = np.array([], dtype = cmd_array.dtype)
+        
+        for each_cmd in cmd_array:
+            if [True for token in token_list if token in each_cmd["commands"] ]:
+                new_cmd = np.array( [ ( each_cmd["commands"],
+                                                         each_cmd["time"],
+                                                         each_cmd["date"] ) ], dtype = cmd_array.dtype)
+                
+                extracted_array = np.append(extracted_array, new_cmd, axis=0) 
+        
+        # Return the extracted array
+        return extracted_array
+    

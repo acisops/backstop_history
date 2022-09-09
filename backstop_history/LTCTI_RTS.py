@@ -77,7 +77,7 @@ dtype=[('date', 'S20'), ('time', '<f8'), ('statement', 'S20'), ('mnemonic', 'S20
                   - Directory in which your RTS files canbe found.
                    At present there are only three:
                    
-                   1_4_CTI.RTS
+                   1_ECS4.RTS
                    1_5_CTI.RTS
                    1_CTI06.RTS
                    

@@ -1,0 +1,55 @@
+﻿
+Release Notes for Version 3.1 of Backstop History
+
+
+
+Change Description
+==================
+
+1_ECS4.RTS was substituted for 1_4_CTI.RTS because of the HRC anomaly.
+A new method was added to Backstop_History which provides for
+extracting, from the supplied command array, all commands that contain
+any of the tokens supplied by a token list. An SCS-107 processing error
+was fixed.  
+
+
+Files Changed:
+============== 
+
+https://github.com/acisops/backstop_history/pull/24
+
+
+Testing:
+======== 
+
+Unit and regression testing completed to assure that the
+assembled histories were either unchanged from previous runs or,
+changes that occurred were expected.
+
+Tests were performed on RH 8 systems.
+
+# AUG0822 - NORMAL
+# MAY2820 - 4 chip LTCTI using 1_ECS4.RTS
+# AUG1322 - STOP RTS load after AUG0822 interrupted by BSH  at 2022:223:13:49:23.000
+# APR0122 - SCS-107 RTS load after MAR2822 interrupted by TXINGS at 2022:087:12:40:47
+# APR0322 - SCS-107 RTS load after MAR2822 interrupted by TXINGS at 2022:087:12:40:47
+
+Interface impacts
+=================
+
+None.
+
+
+Review
+====== 
+
+Objectives and Results by ACIS Ops
+
+
+Deployment Plan
+===============
+
+Installation of Backstop History will occur once approved by FSDS.
+
+
+
