@@ -2,10 +2,12 @@
 !$Date:$
 !=======================================================================
 !
-!  NAME: 1_ECS4.RTS
+!  NAME: 1_ECS4ALT.RTS
 !
 !  DESCRIPTION: This RTS is used to perform an ACIS ECS measurement 
-!  using only 4 chips to reduce heating effects. The RADMON Enable and 
+!  using only 4 chips to reduce heating effects. This RTS differs from 
+!  1_ECS4.RTS in that it uses an alternate set of 4 chips allowing for
+!  better distribution of calibration time.  The RADMON Enable and 
 !  first seven ACIS commands are used to initiate the ECS measurement.  The 
 !  last four ACIS commands and RADMON Disable are issued a fixed duration
 !  (NUM_HOURS) later (selected to be before entering the radiation belt).
@@ -15,7 +17,7 @@
 !
 !  INVOCATION: FOT Request
 !
-!    RTSLOAD,1_ECS4,SCS_NUM=nnn,NUM_HOURS=ddd:hh:mm:ss
+!    RTSLOAD,1_ECS4ALT,SCS_NUM=nnn,NUM_HOURS=ddd:hh:mm:ss
 !
 !  ARGUMENTS:
 !  Name           Type               Description
@@ -33,7 +35,7 @@
 !  HISTORY
 !  Date         Author          Description
 !  ------------ --------------- ----------------------------------------
-!  04-05-22      K. Gage        Original Version
+!  12-02-22      K. Gage        Original Version based on 1_ECS4.RTS
 !
 !=======================================================================
 
@@ -51,12 +53,12 @@ ACIS,WSPOW00000, DELTA=00:00:04.000
 !========================================================================
 ! 3.	ACIS CCD Power-on
 !========================================================================
-ACIS,WSPOW08E1E,DELTA=00:00:24.000
+ACIS,WSPOW1611E,DELTA=00:00:24.000
 
 !========================================================================
 ! 4.	Load Timed Exposure Block
 !========================================================================
-ACIS,WT00C62014,DELTA=00:01:03.000
+ACIS,WT00D9A014,DELTA=00:01:03.000
 
 !========================================================================
 ! 5.	Start Science

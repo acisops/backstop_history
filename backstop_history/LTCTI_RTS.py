@@ -74,12 +74,18 @@ dtype=[('date', 'S20'), ('time', '<f8'), ('statement', 'S20'), ('mnemonic', 'S20
 
 
     inputs:  1) RTS file location
-                  - Directory in which your RTS files canbe found.
-                   At present there are only three:
+                  - Directory in which your RTS files can be found.
+                    At present there are:
                    
-                   1_ECS4.RTS
-                   1_5_CTI.RTS
-                   1_CTI06.RTS
+                     1_ECS2.RTS
+                     1_ECS3A.RTS
+                     1_ECS3B.RTS
+                     1_ECS4ALT.RTS
+                     1_ECS4.RTS
+                     1_ECS5.RTS
+                     1_ECS6.RTS
+              
+                   And from time to time more are added.
                    
               3) Start Time for the execution of the RTS in Chandra DOY format
 
@@ -129,7 +135,7 @@ def convert_RTS_DELTA_to_secs( time_string):
     
 #-------------------------------------------------------------------------------
 #   
-#    Method process_RTSLTCTI_RTS.py
+#    Function  process_RTS 
 #
 #-------------------------------------------------------------------------------
 def processRTS( RTS_name, SCS_NUM, NUM_HOURS, RTS_start_date):
@@ -139,9 +145,9 @@ def processRTS( RTS_name, SCS_NUM, NUM_HOURS, RTS_start_date):
         
 
         inputs:      RTS_name : Name of the LTCTI RTS file (e.g. 1_4_CTI)
-                     SCS_NUM  : The SCS number this RTS file was run in (e.g. 135)
-                    NUM_HOURS : a string in the FOT request format:  ddd:hh:mm:ss
-               RTS_start_date : Start of the LTCTI in DOY format
+                         SCS_NUM  : The SCS number this RTS file was run in (e.g. 135)
+                     NUM_HOURS : a string in the FOT request format:  ddd:hh:mm:ss
+                 RTS_start_date : Start of the LTCTI in DOY format
 
         ACIS LTCTI RTS files contain comma separated lines, and each line entry
          can have 2,3 or 4 columns.
@@ -177,16 +183,16 @@ def processRTS( RTS_name, SCS_NUM, NUM_HOURS, RTS_start_date):
 
 
     RTS_dtype = [('date', '|U20'),
-                 ('time','<f8'),
-                 ('statement', '|U20'),           
-                 ('mnemonic', '|U20'), 
-                 ('substitution_parameter',  '|U20'),
-                 ('substitution_parameter_value',  '|U20'),
-                 ('DELTA','<f8'),
-                 ('SCS_NUM', '|U5')]
+                          ('time','<f8'),
+                          ('statement', '|U20'),           
+                          ('mnemonic', '|U20'), 
+                          ('substitution_parameter',  '|U20'),
+                          ('substitution_parameter_value',  '|U20'),
+                          ('DELTA','<f8'),
+                          ('SCS_NUM', '|U5')]
 
     present_time = None      # Variable used to store the time in seconds
-                                      # of the last processed RTS command
+                                           # of the last processed RTS command
 
 
     # Compile the regex match criteria for the lines in the CTI RTS files
@@ -309,7 +315,7 @@ def processRTS( RTS_name, SCS_NUM, NUM_HOURS, RTS_start_date):
                                            dt,
                                            SCS_NUM) ],
                                         dtype = RTS_dtype)  ]
-        
+
     # Done with the RTS file - close it
     rts_load.close()
         

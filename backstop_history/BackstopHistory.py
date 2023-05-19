@@ -63,7 +63,13 @@
 #               - Substituted 1_ECS4.RTS for 1_4_CTI.RTS
 #               - Fixed SCS-107 SIMTRANS location
 #               - Fixed comment typos
-#       
+#
+# Update: May 17, 2023
+#               Gregg Germain
+#               - V4.4
+#               - Added 1_ECS2, 1_ECS3A, 1_ECS3B, 1_ECS4ALT, RTS files.
+#               - Replaced the  the 6 chip RTS file with 1_ECS6
+#
 ################################################################################
 from __future__ import print_function
 
@@ -156,7 +162,7 @@ class Backstop_History_Class(object):
 
         self.logger = logger
 
-        self.logger.debug('GIT_BSH: LOGGER ************************* BSHC Init' )
+        self.logger.debug('Backstop History V4.4: LOGGER ************************* BSHC Init' )
 
         self.outdir = outdir
 
@@ -219,7 +225,7 @@ class Backstop_History_Class(object):
         cmd_def_file_path = os.path.join(self.cmd_seq_file_path, 'CR_Commands.dat')
         with open(cmd_def_file_path) as f:
             CR_cmd_data = f.read()
-      
+
         # reconstructing the data as a dictionary
         self.CR_cmds = json.loads(CR_cmd_data)
 
@@ -1031,6 +1037,7 @@ class Backstop_History_Class(object):
             Output: processed_cmd_array
                      - array of commands adjusted to the given BEGIN date
         """
+
         # Make a list of the actual command strings, in raw form, 
         # for each command in the cmd_list using the CR_cmds dictionary
         raw_cmds = [self.CR_cmds[eachcmd] for eachcmd in cmd_list]

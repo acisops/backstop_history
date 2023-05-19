@@ -1,0 +1,79 @@
+﻿
+Release Notes for Version 3.2.0 of Backstop History
+
+
+
+Change Description
+==================
+
+ACIS Ops created n ew variations of SI modes, and their associated RTS files,  for
+Long Term ECS measurements. Backstop History was updated to incorporate
+these new RTS files in future history assemblies.
+
+The added RTS files are:
+
+1_ECS2.RTS
+1_ECS3A.RTS
+1_ECS3B.RTS
+1_ECS5.RTS
+1_ECS6.RTS
+
+Changes to the python files consist mainly of documentation changes. The major
+portion of the update is to include the new RTS files in the directory and update a
+data file.
+
+Files Changed:
+============== 
+
+https://github.com/acisops/backstop_history/pull/?????????
+
+
+Testing:
+======== 
+
+Unit and regression testing completed using all new and operational RTS files
+to assure that the assembled histories correctly contained the commands
+from the new RTS files whenever they were used.
+
+Unit tests included:
+
+- Isolated tests of processRTS which reads and process an RTS file to assure the new files
+  were correctly read and processed by the code.
+
+- An assemply of the history of the SEP0917 load after an interrupt of the SEP0417
+load to assure the assembled history contained the correct RTS commands
+
+Regression testing Loads were full LR runs with checks of the thermal model outputs
+and assembled history files to assure correct processing of the new RTS files. Thermal
+model outputs were compared to the production load output to check the resultant
+change in the thermal response where appropriate.
+
+Loads used for Regression testing:
+
+ - FEB2023B Maneuver-Only load executed after the Full Stop interruption of
+   the FEB1323 load.
+
+ - FEB2423A Return to Science load which is a TOO interruption of FEB2023.
+ 
+ - All tests passed.
+
+
+Interface impacts
+=================
+
+None.
+
+
+Review
+====== 
+
+Objectives and Results by ACIS Ops
+
+
+Deployment Plan
+===============
+
+Installation of Backstop History will occur once approved by FSDS.
+
+
+
