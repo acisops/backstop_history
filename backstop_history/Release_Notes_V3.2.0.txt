@@ -38,11 +38,29 @@ from the new RTS files whenever they were used.
 
 Unit tests included:
 
-- Isolated tests of processRTS which reads and process an RTS file to assure the new files
-  were correctly read and processed by the code.
+- Isolated tests of processRTS, which reads and processes an RTS file, to assure that the new files
+  were correctly read and processed by the code.  processRTS is a function located in LTCTI_RTS.py.
+  To perform these tests a program was written which created  an instance of LTCTI_RTS.py providing
+  access to processRTS. A list of the new RTS file names was also created.  Then, in a loop, processRTS was
+  called supplying each RTS name in the list, plus fixed values for the other inputs to processRTS
+  ( a CAP number, the length of time for the LTECS run, and a date for the start of the execution
+  of the RTS).  The resulting processed RTS file was  displayed and inspected for correctness.
+  LTCTI_RTS.py was not changed in this update other than comments and adding whitespace to
+  make the code look more tidy.
 
-- An assembly of the history of the SEP0917 load after an interrupt of the SEP0417
-load to assure the assembled history contained the correct RTS commands
+- An assembly of the history of the SEP0917 load, after an interrupt of the SEP0417
+  load, to assure the assembled history contained the correct RTS commands.
+  A program used for unit testing created an instance of backstop_history,
+  sets the review load directory to /data/acis/LoadReviews/2017/SEP0917/ofls/ and sets a
+  tbegin time to assure an assembly of a history that extends to the beginning of the SEP0417 load
+  In production, a long term ECS measurement was executed during the shutdown.
+  The production NonLoadTrackedEvents.txt file was copied to a test NLET file.
+  This file was edited to substitute each new RTS file for the one used in production. Backstop History
+  is already set up to accept an NLET file other than the production version.  For each RTS file
+  the backstop_history method: Assemble_History(review_load_dir, tbegin) was called.
+  The assembled histories were inspected for completeness and correct timing for each new RTS file.  The
+  RTS commands had to have the correct time stamps, all commands had to appear, and the commands
+  had to appear in the correct time order within the assembled history.
 
 Regression testing Loads were full LR runs with checks of the thermal model outputs
 and assembled history files to assure correct processing of the new RTS files. Thermal
