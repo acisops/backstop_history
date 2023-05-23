@@ -2,7 +2,6 @@
 Release Notes for Version 3.2.0 of Backstop History
 
 
-
 Change Description
 ==================
 
@@ -16,12 +15,14 @@ The added RTS files are:
 1_ECS2.RTS
 1_ECS3A.RTS
 1_ECS3B.RTS
+1_ECS4.RTS
+1_ECS4ALT.RTS
 1_ECS5.RTS
 1_ECS6.RTS
 
 Changes to the python files consist mainly of documentation changes. The major
-portion of the update is to include the new RTS files in the directory and an update a
-data file.
+portion of the update is to include the new RTS files in the directory and an update
+to a data file.
 
 Files Changed:
 ============== 
@@ -31,7 +32,7 @@ https://github.com/acisops/backstop_history/pull/25
 Testing:
 ======== 
 
-Unit and regression testing completed, using all new and operational RTS files,
+Unit and regression testing completed, using all the new RTS files,
 to assure that the assembled histories correctly contained the commands
 from the new RTS files whenever they were used.
 
