@@ -1,0 +1,98 @@
+﻿
+Release Notes for Version 3.2.0 of Backstop History
+
+
+Change Description
+==================
+
+New variations of SI modes, and their associated RTS files,  for Long Term ECS
+measurements were created to provide a more flexible chip selection.
+Backstop History was updated to incorporate these new RTS files in future
+history assemblies.
+
+The added RTS files are:
+
+1_ECS2.RTS
+1_ECS3A.RTS
+1_ECS3B.RTS
+1_ECS4.RTS
+1_ECS4ALT.RTS
+1_ECS5.RTS
+1_ECS6.RTS
+
+Changes to the python files consist mainly of documentation changes. The major
+portion of the update is to include the new RTS files in the directory and an update
+to a data file.
+
+Files Changed:
+============== 
+
+https://github.com/acisops/backstop_history/pull/25
+
+Testing:
+======== 
+
+Unit and regression testing completed, using all the new RTS files,
+to assure that the assembled histories correctly contained the commands
+from the new RTS files whenever they were used.
+
+Unit tests included:
+
+- Isolated tests of processRTS, which reads and processes an RTS file, to assure that the new files
+  were correctly read and processed by the code.  processRTS is a function located in LTCTI_RTS.py.
+  To perform these tests a program was written which created  an instance of LTCTI_RTS.py providing
+  access to processRTS. A list of the new RTS file names was also created.  Then, in a loop, processRTS was
+  called supplying each RTS name in the list, plus fixed values for the other inputs to processRTS
+  ( a CAP number, the length of time for the LTECS run, and a date for the start of the execution
+  of the RTS).  The resulting processed RTS file was  displayed and inspected for correctness.
+  LTCTI_RTS.py was not changed in this update other than comments and adding whitespace to
+  make the code look more tidy.
+
+- An assembly of the history of the SEP0917 load, after an interrupt of the SEP0417
+  load, to assure the assembled history contained the correct RTS commands.
+  A program used for unit testing created an instance of backstop_history,
+  sets the review load directory to /data/acis/LoadReviews/2017/SEP0917/ofls/ and sets a
+  tbegin time to assure an assembly of a history that extends to the beginning of the SEP0417 load
+  In production, a long term ECS measurement was executed during the shutdown.
+  The production NonLoadTrackedEvents.txt file was copied to a test NLET file.
+  This file was edited to substitute each new RTS file for the one used in production. Backstop History
+  is already set up to accept an NLET file other than the production version.  For each RTS file
+  the backstop_history method: Assemble_History(review_load_dir, tbegin) was called.
+  The assembled histories were inspected for completeness and correct timing for each new RTS file.  The
+  RTS commands had to have the correct time stamps, all commands had to appear, and the commands
+  had to appear in the correct time order within the assembled history.
+
+Regression testing Loads were full LR runs with checks of the thermal model outputs
+and assembled history files to assure correct processing of the new RTS files. Thermal
+model outputs were compared to the production load output to check the resultant
+change in the thermal response where appropriate.
+
+Loads used for Regression testing:
+
+ - FEB2023B Maneuver-Only load executed after the Full Stop interruption of
+   the FEB1323 load.
+
+ - FEB2423A Return to Science load which is a TOO interruption of FEB2023.
+ 
+ - All tests passed.
+
+
+Interface impacts
+=================
+
+None.
+
+
+Review
+====== 
+
+Objectives and Results by ACIS Ops
+
+
+Deployment Plan
+===============
+
+Installation of Backstop History will occur once approved by FSDS.
+
+
+
