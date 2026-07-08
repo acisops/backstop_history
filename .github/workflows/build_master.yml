@@ -3,16 +3,10 @@ on:
   push:
     branches:
     - master
-  release:
-    types:
-    - created
-  repository_dispatch:
-    types:
-      - conda-build
 
 jobs:
   build:
-    uses: acisops/skare3/.github/workflows/package_build.yml@master
+    uses: sot/skare3/.github/workflows/package_build.yml@master
     with:
       noarch: true
     secrets:
@@ -22,6 +16,6 @@ jobs:
 
   upload:
     needs: [build]
-    uses: acisops/skare3/.github/workflows/package_upload.yml@master
+    uses: sot/skare3/.github/workflows/package_upload.yml@master
     with:
       channel: masters
